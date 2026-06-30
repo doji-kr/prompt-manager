@@ -43,8 +43,25 @@ def add_prompt():
 
 
 def show_all():
-    # 메뉴 2번: 전체 목록 보기 (아직 미구현)
-    print("\n[전체 목록 보기] — 아직 준비 중입니다.")
+    # 메뉴 2번: 전체 목록 보기
+    print("\n===== 전체 목록 =====")
+
+    if len(prompts) == 0:
+        print("저장된 프롬프트가 없습니다.")
+        return
+
+    for i in range(len(prompts)):
+        prompt = prompts[i]
+
+        # 즐겨찾기면 별표, 아니면 빈칸
+        if prompt["favorite"]:
+            star = "⭐"
+        else:
+            star = "  "
+
+        print(f"{i + 1}. {star} [{prompt['category']}] {prompt['title']}")
+
+    print("=====================")
 
 
 def show_by_category():
@@ -53,8 +70,38 @@ def show_by_category():
 
 
 def search_prompt():
-    # 메뉴 4번: 검색 (아직 미구현)
-    print("\n[검색] — 아직 준비 중입니다.")
+    # 메뉴 4번: 검색
+    keyword = input("\n검색어를 입력하세요: ").strip()
+
+    if keyword == "":
+        print("검색어를 입력해 주세요.")
+        return
+
+    print(f"\n===== '{keyword}' 검색 결과 =====")
+
+    found_count = 0
+
+    for i in range(len(prompts)):
+        prompt = prompts[i]
+
+        # 대소문자 구분 없이 제목, 내용, 카테고리에 검색어가 있는지 확인
+        title_match = keyword.lower() in prompt["title"].lower()
+        content_match = keyword.lower() in prompt["content"].lower()
+        category_match = keyword.lower() in prompt["category"].lower()
+
+        if title_match or content_match or category_match:
+            if prompt["favorite"]:
+                star = "⭐"
+            else:
+                star = "  "
+
+            print(f"{i + 1}. {star} [{prompt['category']}] {prompt['title']}")
+            found_count += 1
+
+    if found_count == 0:
+        print("검색 결과가 없습니다.")
+
+    print("================================")
 
 
 def show_detail():
