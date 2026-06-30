@@ -1,6 +1,20 @@
+# ──────────────────────────────────────────────────────────────
+#   prompt-manager  ::  stash your prompts. summon them at will.
+# ──────────────────────────────────────────────────────────────
+#   [ crafted by ]   doji
+#   [ contact    ]   dotteda@gmail.com
+#   [ stack      ]   python3 · rich · pure terminal
+#   [ status     ]   it works on my machine ¯\_(ツ)_/¯
+# ──────────────────────────────────────────────────────────────
 # prompt_manager.py — AI 프롬프트 관리 프로그램
 
 import json
+from rich.console import Console
+from rich.text import Text
+from rich.panel import Panel
+from rich.table import Table
+
+console = Console()
 
 FILE_NAME = "prompts.json"  # 저장할 파일 이름
 
@@ -27,18 +41,38 @@ prompts = [
 ]
 
 
+def show_logo():
+    logo = r"""
+ ▄█████  ▄▄▄  ▄▄▄▄  ▄▄ ▄▄  ▄▄▄▄  ▄▄▄▄ ▄▄▄▄▄ ▄▄ ▄▄   █████▄ ▄▄▄▄   ▄▄▄  ▄▄   ▄▄ ▄▄▄▄ ▄▄▄▄▄▄   ▄▄ ▄▄ ▄██
+ ██     ██▀██ ██▀██ ▀███▀ ███▄▄ ███▄▄ ██▄▄  ▀███▀   ██▄▄█▀ ██▄█▄ ██▀██ ██▀▄▀██ ██▄█▀  ██     ██▄██  ██
+ ▀█████ ▀███▀ ████▀   █   ▄▄██▀ ▄▄██▀ ██▄▄▄   █     ██     ██ ██ ▀███▀ ██   ██ ██     ██      ▀█▀   ██
+"""
+    tagline = "> stash your prompts. summon them at will."
+
+    console.print(logo, style="cyan", highlight=False)
+    console.print(tagline, style="bright_black")
+
+
 def show_menu():
     # 사용자에게 선택지를 보여주는 함수
-    print("\n===== AI 프롬프트 관리자 =====")
-    print("1. 프롬프트 추가")
-    print("2. 전체 목록 보기")
-    print("3. 카테고리별 조회")
-    print("4. 검색")
-    print("5. 상세 보기")
-    print("6. 즐겨찾기 관리")
-    print("7. 마크다운 파일로 내보내기")
-    print("0. 종료")
-    print("==============================")
+    menu_items = [
+        ("1", "프롬프트 추가"),
+        ("2", "전체 목록 보기"),
+        ("3", "카테고리별 조회"),
+        ("4", "검색"),
+        ("5", "상세 보기"),
+        ("6", "즐겨찾기 관리"),
+        ("7", "마크다운 파일로 내보내기"),
+        ("0", "종료"),
+    ]
+
+    # 메뉴 항목을 한 줄씩 Text 객체로 조합한다
+    content = Text()
+    for number, label in menu_items:
+        content.append(f"  {number}", style="bold cyan")
+        content.append(f"  {label}\n")
+
+    console.print(Panel(content, title="MENU", border_style="cyan"))
 
 
 def add_prompt():
@@ -94,24 +128,27 @@ def add_prompt():
 
 def show_all():
     # 메뉴 2번: 전체 목록 보기
-    print("\n===== 전체 목록 =====")
-
     if len(prompts) == 0:
-        print("저장된 프롬프트가 없습니다.")
+        console.print("\n저장된 프롬프트가 없습니다.", style="yellow")
         return
+
+    table = Table(title="전체 목록", border_style="cyan", header_style="bold cyan")
+    table.add_column("번호", justify="center", width=4)
+    table.add_column("제목")
+    table.add_column("카테고리")
+    table.add_column("즐겨찾기", justify="center", width=6)
 
     for i in range(len(prompts)):
         prompt = prompts[i]
 
-        # 즐겨찾기면 별표, 아니면 빈칸
         if prompt["favorite"]:
-            star = "⭐"
+            star = Text("⭐", style="yellow")
         else:
-            star = "  "
+            star = Text("")
 
-        print(f"{i + 1}. {star} [{prompt['category']}] {prompt['title']}")
+        table.add_row(str(i + 1), prompt["title"], prompt["category"], star)
 
-    print("=====================")
+    console.print(table)
 
 
 def show_by_category():
@@ -217,16 +254,23 @@ def show_detail():
     prompt = prompts[index]
 
     if prompt["favorite"]:
-        favorite_text = "⭐ 즐겨찾기"
+        favorite_text = Text("⭐ 즐겨찾기", style="yellow")
     else:
-        favorite_text = "즐겨찾기 안 함"
+        favorite_text = Text("즐겨찾기 안 함", style="bright_black")
 
-    print("\n========== 상세 보기 ==========")
-    print(f"제목     : {prompt['title']}")
-    print(f"카테고리 : {prompt['category']}")
-    print(f"즐겨찾기 : {favorite_text}")
-    print(f"내용     :\n{prompt['content']}")
-    print("================================")
+    # Panel 안에 넣을 내용을 Text로 조합한다
+    content = Text()
+    content.append("제목     : ", style="bold cyan")
+    content.append(f"{prompt['title']}\n")
+    content.append("카테고리 : ", style="bold cyan")
+    content.append(f"{prompt['category']}\n")
+    content.append("즐겨찾기 : ", style="bold cyan")
+    content.append(favorite_text)
+    content.append("\n\n")
+    content.append("내용\n", style="bold cyan")
+    content.append(prompt["content"])
+
+    console.print(Panel(content, title="상세 보기", border_style="cyan"))
 
 
 def toggle_favorite():
@@ -347,7 +391,7 @@ def manage_favorite():
 def run():
     # 프로그램의 메인 루프
     # 메뉴를 보여주고 → 번호를 받고 → 해당 기능 실행 → 다시 메뉴로
-    print("AI 프롬프트 관리자를 시작합니다.")
+    show_logo()
     load_from_file()  # 시작할 때 저장 파일을 불러온다
 
     while True:
