@@ -225,9 +225,72 @@ def show_detail():
     print("================================")
 
 
+def toggle_favorite():
+    # 번호를 입력받아 즐겨찾기를 추가하거나 해제한다
+    if len(prompts) == 0:
+        print("\n저장된 프롬프트가 없습니다.")
+        return
+
+    show_all()
+
+    number = input("번호를 입력하세요: ").strip()
+
+    if not number.isdigit():
+        print("숫자를 입력해 주세요.")
+        return
+
+    index = int(number) - 1
+
+    if index < 0 or index >= len(prompts):
+        print("올바르지 않은 번호입니다.")
+        return
+
+    prompt = prompts[index]
+
+    # 현재 상태의 반대로 뒤집는다
+    prompt["favorite"] = not prompt["favorite"]
+
+    if prompt["favorite"]:
+        print(f"\n'{prompt['title']}' 을(를) 즐겨찾기에 추가했습니다. ⭐")
+    else:
+        print(f"\n'{prompt['title']}' 을(를) 즐겨찾기에서 해제했습니다.")
+
+
+def show_favorites():
+    # 즐겨찾기된 프롬프트만 모아서 출력한다
+    print("\n===== 즐겨찾기 목록 =====")
+
+    found_count = 0
+    for i in range(len(prompts)):
+        prompt = prompts[i]
+        if prompt["favorite"]:
+            print(f"{i + 1}. ⭐ [{prompt['category']}] {prompt['title']}")
+            found_count += 1
+
+    if found_count == 0:
+        print("즐겨찾기한 프롬프트가 없습니다.")
+
+    print("=========================")
+
+
 def manage_favorite():
-    # 메뉴 6번: 즐겨찾기 관리 (아직 미구현)
-    print("\n[즐겨찾기 관리] — 아직 준비 중입니다.")
+    # 메뉴 6번: 즐겨찾기 관리 — 서브 메뉴
+    print("\n===== 즐겨찾기 관리 =====")
+    print("1. 즐겨찾기 추가 / 해제")
+    print("2. 즐겨찾기 목록 보기")
+    print("0. 돌아가기")
+    print("=========================")
+
+    choice = input("번호를 입력하세요: ").strip()
+
+    if choice == "1":
+        toggle_favorite()
+    elif choice == "2":
+        show_favorites()
+    elif choice == "0":
+        return
+    else:
+        print("올바르지 않은 번호입니다.")
 
 
 def run():
