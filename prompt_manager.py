@@ -1,5 +1,8 @@
 # prompt_manager.py — AI 프롬프트 관리 프로그램
 
+import json
+
+FILE_NAME = "prompts.json"  # 저장할 파일 이름
 
 # 프롬프트를 담는 리스트. 딕셔너리 하나 = 프롬프트 하나.
 prompts = [
@@ -273,6 +276,25 @@ def show_favorites():
     print("=========================")
 
 
+def load_from_file():
+    # JSON 파일에서 프롬프트 목록을 읽어 prompts 리스트에 불러온다
+    global prompts  # 함수 안에서 전역 변수를 교체할 때 필요하다
+
+    try:
+        with open(FILE_NAME, "r", encoding="utf-8") as f:
+            prompts = json.load(f)
+        print(f"'{FILE_NAME}' 파일에서 {len(prompts)}개의 프롬프트를 불러왔습니다.")
+    except FileNotFoundError:
+        print("저장된 파일이 없습니다. 기본 프롬프트로 시작합니다.")
+
+
+def save_to_file():
+    # prompts 리스트를 JSON 파일로 저장한다
+    with open(FILE_NAME, "w", encoding="utf-8") as f:
+        json.dump(prompts, f, ensure_ascii=False, indent=2)
+    print(f"프롬프트를 '{FILE_NAME}' 파일에 저장했습니다.")
+
+
 def manage_favorite():
     # 메뉴 6번: 즐겨찾기 관리 — 서브 메뉴
     print("\n===== 즐겨찾기 관리 =====")
@@ -297,6 +319,7 @@ def run():
     # 프로그램의 메인 루프
     # 메뉴를 보여주고 → 번호를 받고 → 해당 기능 실행 → 다시 메뉴로
     print("AI 프롬프트 관리자를 시작합니다.")
+    load_from_file()  # 시작할 때 저장 파일을 불러온다
 
     while True:
         show_menu()
@@ -315,6 +338,7 @@ def run():
         elif choice == "6":
             manage_favorite()
         elif choice == "0":
+            save_to_file()  # 종료하기 전에 저장한다
             print("\n프로그램을 종료합니다. 안녕히 가세요!")
             break
         else:
