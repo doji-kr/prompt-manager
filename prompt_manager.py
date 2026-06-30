@@ -105,8 +105,40 @@ def search_prompt():
 
 
 def show_detail():
-    # 메뉴 5번: 상세 보기 (아직 미구현)
-    print("\n[상세 보기] — 아직 준비 중입니다.")
+    # 메뉴 5번: 상세 보기
+    if len(prompts) == 0:
+        print("\n저장된 프롬프트가 없습니다.")
+        return
+
+    show_all()
+
+    number = input("번호를 입력하세요: ").strip()
+
+    # 숫자인지 확인
+    if not number.isdigit():
+        print("숫자를 입력해 주세요.")
+        return
+
+    index = int(number) - 1  # 사용자는 1번부터, 리스트는 0번부터
+
+    # 범위 안에 있는지 확인
+    if index < 0 or index >= len(prompts):
+        print("올바르지 않은 번호입니다.")
+        return
+
+    prompt = prompts[index]
+
+    if prompt["favorite"]:
+        favorite_text = "⭐ 즐겨찾기"
+    else:
+        favorite_text = "즐겨찾기 안 함"
+
+    print("\n========== 상세 보기 ==========")
+    print(f"제목     : {prompt['title']}")
+    print(f"카테고리 : {prompt['category']}")
+    print(f"즐겨찾기 : {favorite_text}")
+    print(f"내용     :\n{prompt['content']}")
+    print("================================")
 
 
 def manage_favorite():
