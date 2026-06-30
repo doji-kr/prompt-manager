@@ -36,6 +36,7 @@ def show_menu():
     print("4. 검색")
     print("5. 상세 보기")
     print("6. 즐겨찾기 관리")
+    print("7. 마크다운 파일로 내보내기")
     print("0. 종료")
     print("==============================")
 
@@ -276,6 +277,34 @@ def show_favorites():
     print("=========================")
 
 
+def export_to_md():
+    # 저장된 프롬프트 전체를 마크다운 파일로 내보낸다
+    if len(prompts) == 0:
+        print("\n저장된 프롬프트가 없습니다.")
+        return
+
+    MD_FILE = "prompts.md"
+
+    with open(MD_FILE, "w", encoding="utf-8") as f:
+        f.write("# AI 프롬프트 목록\n\n")
+
+        for i in range(len(prompts)):
+            prompt = prompts[i]
+
+            if prompt["favorite"]:
+                star = " ⭐"
+            else:
+                star = ""
+
+            f.write(f"## {i + 1}. {prompt['title']}{star}\n\n")
+            f.write(f"- **카테고리**: {prompt['category']}\n\n")
+            f.write(f"### 내용\n\n")
+            f.write(f"{prompt['content']}\n\n")
+            f.write("---\n\n")
+
+    print(f"\n'{MD_FILE}' 파일로 내보냈습니다. ({len(prompts)}개)")
+
+
 def load_from_file():
     # JSON 파일에서 프롬프트 목록을 읽어 prompts 리스트에 불러온다
     global prompts  # 함수 안에서 전역 변수를 교체할 때 필요하다
@@ -337,6 +366,8 @@ def run():
             show_detail()
         elif choice == "6":
             manage_favorite()
+        elif choice == "7":
+            export_to_md()
         elif choice == "0":
             save_to_file()  # 종료하기 전에 저장한다
             print("\n프로그램을 종료합니다. 안녕히 가세요!")
