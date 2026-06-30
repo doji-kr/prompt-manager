@@ -1,6 +1,29 @@
 # prompt_manager.py — AI 프롬프트 관리 프로그램
 
 
+# 프롬프트를 담는 리스트. 딕셔너리 하나 = 프롬프트 하나.
+prompts = [
+    {
+        "title": "블로그 글 작성",
+        "content": "다음 주제로 블로그 글을 써줘. 제목, 소제목, 본문 순서로 구성하고 2000자 내외로 작성해.",
+        "category": "텍스트 생성",
+        "favorite": False,
+    },
+    {
+        "title": "수채화풍 풍경 이미지",
+        "content": "A serene mountain landscape at sunset, watercolor style, soft pastel colors, highly detailed, 4K.",
+        "category": "이미지 생성",
+        "favorite": True,
+    },
+    {
+        "title": "친절한 고객 상담 페르소나",
+        "content": "너는 10년 경력의 고객 상담 전문가야. 항상 공감하는 말투로 답하고, 문제 해결을 최우선으로 해.",
+        "category": "페르소나",
+        "favorite": False,
+    },
+]
+
+
 def show_menu():
     # 사용자에게 선택지를 보여주는 함수
     print("\n===== AI 프롬프트 관리자 =====")
