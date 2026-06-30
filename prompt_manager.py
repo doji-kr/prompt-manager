@@ -111,8 +111,46 @@ def show_all():
 
 
 def show_by_category():
-    # 메뉴 3번: 카테고리별 조회 (아직 미구현)
-    print("\n[카테고리별 조회] — 아직 준비 중입니다.")
+    # 메뉴 3번: 카테고리별 조회
+    if len(prompts) == 0:
+        print("\n저장된 프롬프트가 없습니다.")
+        return
+
+    # 현재 저장된 프롬프트에서 카테고리 목록을 중복 없이 뽑는다
+    categories = []
+    for prompt in prompts:
+        if prompt["category"] not in categories:
+            categories.append(prompt["category"])
+
+    print("\n===== 카테고리 선택 =====")
+    for i in range(len(categories)):
+        print(f"  {i + 1}. {categories[i]}")
+
+    choice = input("번호를 입력하세요: ").strip()
+
+    if not choice.isdigit() or not (1 <= int(choice) <= len(categories)):
+        print("올바르지 않은 번호입니다.")
+        return
+
+    selected = categories[int(choice) - 1]
+
+    print(f"\n===== [{selected}] 목록 =====")
+
+    found_count = 0
+    for i in range(len(prompts)):
+        prompt = prompts[i]
+        if prompt["category"] == selected:
+            if prompt["favorite"]:
+                star = "⭐"
+            else:
+                star = "  "
+            print(f"{i + 1}. {star} {prompt['title']}")
+            found_count += 1
+
+    if found_count == 0:
+        print("해당 카테고리에 프롬프트가 없습니다.")
+
+    print("=========================")
 
 
 def search_prompt():
