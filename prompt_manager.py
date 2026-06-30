@@ -38,8 +38,54 @@ def show_menu():
 
 
 def add_prompt():
-    # 메뉴 1번: 프롬프트 추가 (아직 미구현)
-    print("\n[프롬프트 추가] — 아직 준비 중입니다.")
+    # 메뉴 1번: 프롬프트 추가
+    print("\n===== 프롬프트 추가 =====")
+
+    # 제목 입력 — 빈 값이면 다시 묻는다
+    while True:
+        title = input("제목: ").strip()
+        if title != "":
+            break
+        print("제목을 입력해 주세요.")
+
+    # 내용 입력 — 빈 값이면 다시 묻는다
+    while True:
+        content = input("내용: ").strip()
+        if content != "":
+            break
+        print("내용을 입력해 주세요.")
+
+    # 카테고리 선택
+    categories = ["텍스트 생성", "이미지 생성", "영상 생성", "페르소나", "자동화", "기타"]
+
+    print("\n카테고리를 선택하세요:")
+    for i in range(len(categories)):
+        print(f"  {i + 1}. {categories[i]}")
+    print("  0. 직접 입력")
+
+    category_choice = input("번호를 입력하세요: ").strip()
+
+    if category_choice == "0":
+        category = input("카테고리를 직접 입력하세요: ").strip()
+        if category == "":
+            category = "기타"
+    elif category_choice.isdigit() and 1 <= int(category_choice) <= len(categories):
+        category = categories[int(category_choice) - 1]
+    else:
+        print("올바르지 않은 번호입니다. 카테고리를 '기타'로 설정합니다.")
+        category = "기타"
+
+    # 딕셔너리로 만들어 리스트에 추가
+    new_prompt = {
+        "title": title,
+        "content": content,
+        "category": category,
+        "favorite": False,
+    }
+    prompts.append(new_prompt)
+
+    print(f"\n'{title}' 프롬프트가 추가되었습니다.")
+    print("=========================")
 
 
 def show_all():
